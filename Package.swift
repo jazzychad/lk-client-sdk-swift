@@ -9,6 +9,7 @@ let package = Package(
         .iOS(.v13),
         .macOS(.v10_15),
         .macCatalyst(.v14),
+        .visionOS(.v1)
     ],
     products: [
         .library(
@@ -18,7 +19,6 @@ let package = Package(
     ],
     dependencies: [
         // LK-Prefixed Dynamic WebRTC XCFramework
-        .package(url: "https://github.com/livekit/webrtc-xcframework.git", exact: "114.5735.13"),
         .package(url: "https://github.com/apple/swift-protobuf.git", .upToNextMajor(from: "1.25.2")),
         .package(url: "https://github.com/apple/swift-log.git", .upToNextMajor(from: "1.5.4")),
         // Only used for DocC generation
