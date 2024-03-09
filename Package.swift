@@ -32,7 +32,6 @@ let package = Package(
             name: "LiveKit",
             dependencies: [
                 .target(name: "CHeaders"),
-                .product(name: "LiveKitWebRTC", package: "webrtc-xcframework"),
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
                 .product(name: "Logging", package: "swift-log"),
             ],
