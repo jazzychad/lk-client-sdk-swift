@@ -34,7 +34,7 @@ class WebSocket: NSObject, Loggable, AsyncSequence, URLSessionWebSocketDelegate 
         config.timeoutIntervalForResource = TimeInterval(604_800)
         config.shouldUseExtendedBackgroundIdleMode = true
         config.networkServiceType = .callSignaling
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         config.multipathServiceType = .handover
         #endif
         return URLSession(configuration: config, delegate: self, delegateQueue: nil)

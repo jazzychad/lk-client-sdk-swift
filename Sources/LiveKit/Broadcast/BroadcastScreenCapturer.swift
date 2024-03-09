@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#if os(iOS)
+#if os(iOS) || os(visionOS)
 
 import Foundation
 
@@ -39,7 +39,12 @@ class BroadcastScreenCapturer: BufferCapturer {
         guard let identifier = lookUpAppGroupIdentifier(),
               let filePath = filePathForIdentifier(identifier) else { return false }
 
+        #if os(iOS) // ce
         let bounds = await UIScreen.main.bounds
+        #elseif os(visionOS)
+        // arbitrary bounds to make visionOS compile for now..
+        let bounds = CGRect(origin: .zero, size: .init(width: 500, height: 500))
+        #endif
         let width = bounds.size.width
         let height = bounds.size.height
         let screenDimension = Dimensions(width: Int32(width), height: Int32(height))

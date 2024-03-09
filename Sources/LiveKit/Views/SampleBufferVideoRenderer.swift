@@ -29,7 +29,7 @@ class SampleBufferVideoRenderer: NativeView, Loggable {
         // this is required for macOS
         wantsLayer = true
         layer?.insertSublayer(sampleBufferDisplayLayer, at: 0)
-        #elseif os(iOS)
+        #elseif os(iOS) || os(visionOS)
         layer.insertSublayer(sampleBufferDisplayLayer, at: 0)
         #else
         fatalError("Unimplemented")

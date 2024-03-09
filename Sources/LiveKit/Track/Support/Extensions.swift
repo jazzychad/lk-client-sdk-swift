@@ -96,8 +96,8 @@ public extension CGImage {
     }
 }
 
-#if os(iOS)
-@available(iOS 12, *)
+#if os(iOS) || os(visionOS)
+@available(iOS 12, *, visionOS 1, *)
 public extension RPSystemBroadcastPickerView {
     /// Convenience function to show broadcast extension picker
     static func show(for preferredExtension: String? = nil,

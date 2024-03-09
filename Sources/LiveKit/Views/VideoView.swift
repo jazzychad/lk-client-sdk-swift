@@ -203,7 +203,7 @@ public class VideoView: NativeView, Loggable {
             log("Must be called on main thread", .error)
         }
 
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         clipsToBounds = true
         #endif
 
@@ -380,7 +380,7 @@ public class VideoView: NativeView, Loggable {
             let debugView = ensureDebugTextView()
             debugView.text = "#\(hashValue)\n" + "\(String(describing: _trackSid))\n" + "\(_dimensions.width)x\(_dimensions.height)\n" + "isEnabled: \(isEnabled)\n" + "firstFrame: \(_didRenderFirstFrame)\n" + "isRendering: \(_isRendering)\n" + "renderMode: \(_renderMode)\n" + "viewCount: \(_viewCount)\n" + "FPS: \(_currentFPS)\n"
             debugView.frame = bounds
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             debugView.layer.borderColor = (state.shouldRender ? UIColor.green : UIColor.red).withAlphaComponent(0.5).cgColor
             debugView.layer.borderWidth = 3
             #elseif os(macOS)
@@ -596,7 +596,7 @@ extension VideoView {
 
 extension VideoView {
     public static func isMetalAvailable() -> Bool {
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         MTLCreateSystemDefaultDevice() != nil
         #elseif os(macOS)
         // same method used with WebRTC
@@ -612,14 +612,15 @@ extension VideoView {
             logger.log("Using RTCMTLVideoView for VideoView's Renderer", type: VideoView.self)
             let result = LKRTCMTLVideoView()
 
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             result.contentMode = .scaleAspectFit
             result.videoContentMode = .scaleAspectFit
             #endif
 
             // extra checks for MTKView
+            #if !os(visionOS)
             if let mtkView = result.findMTKView() {
-                #if os(iOS)
+                #if os(iOS) // ce
                 mtkView.contentMode = .scaleAspectFit
                 #elseif os(macOS)
                 mtkView.layerContentsPlacement = .scaleProportionallyToFit
@@ -629,6 +630,7 @@ extension VideoView {
                 logger.log("preferredFramesPerSecond = 60", type: VideoView.self)
                 mtkView.preferredFramesPerSecond = 60
             }
+            #endif
 
             return result
         }
@@ -638,9 +640,11 @@ extension VideoView {
 // MARK: - Access MTKView
 
 extension NativeViewType {
+    #if !os(visionOS)
     func findMTKView() -> MTKView? {
         subviews.compactMap { $0 as? MTKView }.first
     }
+    #endif
 }
 
 #if os(macOS)
@@ -682,13 +686,13 @@ extension LKRTCMTLVideoView: Mirrorable {
             wantsLayer = true
             set(anchorPoint: CGPoint(x: 0.5, y: 0.5))
             layer!.sublayerTransform = VideoView.mirrorTransform
-            #elseif os(iOS)
+            #elseif os(iOS) || os(visionOS)
             layer.transform = VideoView.mirrorTransform
             #endif
         } else {
             #if os(macOS)
             layer?.sublayerTransform = CATransform3DIdentity
-            #elseif os(iOS)
+            #elseif os(iOS) || os(visionOS)
             layer.transform = CATransform3DIdentity
             #endif
         }

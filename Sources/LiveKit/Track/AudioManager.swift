@@ -224,7 +224,7 @@ public class AudioManager: Loggable {
 
             self.log("\(oldState) -> \(newState)")
 
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             let configureFunc = newState.customConfigureFunc ?? self.defaultConfigureAudioSessionFunc
             configureFunc(newState, oldState)
             #endif
@@ -247,7 +247,7 @@ public class AudioManager: Loggable {
         }
     }
 
-    #if os(iOS)
+    #if os(iOS) || os(visionOS)
     /// The default implementation when audio session configuration is requested by the SDK.
     /// Configure the `RTCAudioSession` of `WebRTC` framework.
     ///

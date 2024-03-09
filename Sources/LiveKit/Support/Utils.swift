@@ -23,6 +23,7 @@ typealias DebouncFunc = () -> Void
 enum OS {
     case macOS
     case iOS
+    case visionOS
 }
 
 extension OS: CustomStringConvertible {
@@ -30,6 +31,7 @@ extension OS: CustomStringConvertible {
         switch self {
         case .macOS: return "macOS"
         case .iOS: return "iOS"
+        case .visionOS: return "visionOS"
         }
     }
 }
@@ -56,8 +58,10 @@ class Utils {
     static func os() -> OS {
         #if os(macOS)
         .macOS
-        #elseif os(iOS)
+        #elseif os(iOS) // ce
         .iOS
+        #elseif os(visionOS)
+        .visionOS
         #endif
     }
 
@@ -95,7 +99,7 @@ class Utils {
             guard let cString = pointer.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return nil }
             return String(cString: cString)
         }
-        #elseif os(iOS)
+        #elseif os(iOS) || os(visionOS)
         var systemInfo = utsname()
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
@@ -105,7 +109,7 @@ class Utils {
         }
         // for simulator, the following codes are returned
         guard !["i386", "x86_64", "arm64"].contains(where: { $0 == identifier }) else {
-            return "iOSSimulator,\(identifier)"
+            return "Simulator,\(identifier)"
         }
         return identifier
         #endif

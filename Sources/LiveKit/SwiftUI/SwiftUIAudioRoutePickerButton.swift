@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#if !os(visionOS)
 import AVKit
 import Foundation
 import SwiftUI
@@ -30,7 +31,7 @@ public struct SwiftUIAudioRoutePickerButton: NativeViewRepresentable {
     func makeView(context _: Context) -> AVRoutePickerView {
         let routePickerView = AVRoutePickerView()
 
-        #if os(iOS)
+        #if os(iOS) // ce
         routePickerView.prioritizesVideoDevices = false
         #elseif os(macOS)
         routePickerView.isRoutePickerButtonBordered = false
@@ -47,3 +48,4 @@ public struct SwiftUIAudioRoutePickerButton: NativeViewRepresentable {
         //
     }
 }
+#endif

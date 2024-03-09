@@ -319,7 +319,7 @@ public extension LocalParticipant {
                                                                  reportStatistics: room._state.options.reportRemoteTrackStatistics)
                     return try await self._publish(track: localTrack, options: publishOptions)
                 } else if source == .screenShareVideo {
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     let localTrack: LocalVideoTrack
                     let options = (captureOptions as? ScreenShareCaptureOptions) ?? room._state.options.defaultScreenShareCaptureOptions
                     if options.useBroadcastExtension {
