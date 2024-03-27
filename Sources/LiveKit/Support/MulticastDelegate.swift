@@ -82,7 +82,7 @@ public class MulticastDelegate<T>: NSObject, Loggable {
 
     /// Notify delegates inside the queue.
     /// Label is captured inside the queue for thread safety reasons.
-    func notify(label: (() -> String)? = nil, _ fnc: @escaping (T) -> Void) {
+    func notifyQueue(label: (() -> String)? = nil, _ fnc: @escaping (T) -> Void) {
         _queue.async {
             if let label {
                 self.log("[notify] \(label())", .trace)
@@ -92,6 +92,24 @@ public class MulticastDelegate<T>: NSObject, Loggable {
 
             for delegate in delegates {
                 fnc(delegate)
+            }
+        }
+    }
+
+    func notifyAsync(label: (() -> String)? = nil, _ fnc: @escaping (T) -> Void) async {
+        await withCheckedContinuation { continuation in
+            _queue.async {
+                if let label {
+                    self.log("[notify] \(label())", .trace)
+                }
+
+                let delegates = self._set.allObjects.compactMap { $0 as? T }
+
+                for delegate in delegates {
+                    fnc(delegate)
+                }
+
+                continuation.resume()
             }
         }
     }

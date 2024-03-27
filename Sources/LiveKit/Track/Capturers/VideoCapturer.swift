@@ -78,7 +78,7 @@ public class VideoCapturer: NSObject, Loggable, VideoCapturerProtocol {
         didSet {
             guard oldValue != dimensions else { return }
             log("[publish] \(String(describing: oldValue)) -> \(String(describing: dimensions))")
-            delegates.notify { $0.capturer?(self, didUpdate: self.dimensions) }
+            delegates.notifyQueue { $0.capturer?(self, didUpdate: self.dimensions) }
 
             if let dimensions {
                 log("[publish] dimensions: \(String(describing: dimensions))")
@@ -130,7 +130,7 @@ public class VideoCapturer: NSObject, Loggable, VideoCapturerProtocol {
             return false
         }
 
-        delegates.notify(label: { "capturer.didUpdate state: \(CapturerState.started)" }) {
+        await delegates.notifyAsync(label: { "capturer.didUpdate state: \(CapturerState.started)" }) {
             $0.capturer?(self, didUpdate: .started)
         }
 
@@ -158,7 +158,7 @@ public class VideoCapturer: NSObject, Loggable, VideoCapturerProtocol {
             return false
         }
 
-        delegates.notify(label: { "capturer.didUpdate state: \(CapturerState.stopped)" }) {
+        await delegates.notifyAsync(label: { "capturer.didUpdate state: \(CapturerState.stopped)" }) {
             $0.capturer?(self, didUpdate: .stopped)
         }
 

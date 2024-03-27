@@ -77,10 +77,10 @@ public class LocalParticipant: Participant {
 
         func _notifyDidUnpublish() async {
             guard _notify else { return }
-            delegates.notify(label: { "localParticipant.didUnpublish \(publication)" }) {
+            await delegates.notifyAsync(label: { "localParticipant.didUnpublish \(publication)" }) {
                 $0.participant?(self, didUnpublishTrack: publication)
             }
-            room.delegates.notify(label: { "room.didUnpublish \(publication)" }) {
+            await room.delegates.notifyAsync(label: { "room.didUnpublish \(publication)" }) {
                 $0.room?(room, participant: self, didUnpublishTrack: publication)
             }
         }
@@ -207,10 +207,10 @@ public class LocalParticipant: Participant {
         let didUpdate = super.set(permissions: newValue)
 
         if didUpdate {
-            delegates.notify(label: { "participant.didUpdatePermissions: \(newValue)" }) {
+            delegates.notifyQueue(label: { "participant.didUpdatePermissions: \(newValue)" }) {
                 $0.participant?(self, didUpdatePermissions: newValue)
             }
-            room.delegates.notify(label: { "room.didUpdatePermissions: \(newValue)" }) {
+            room.delegates.notifyQueue(label: { "room.didUpdatePermissions: \(newValue)" }) {
                 $0.room?(room, participant: self, didUpdatePermissions: newValue)
             }
         }
@@ -610,10 +610,10 @@ private extension LocalParticipant {
             add(publication: publication)
 
             // Notify didPublish
-            delegates.notify(label: { "localParticipant.didPublish \(publication)" }) {
+            await delegates.notifyAsync(label: { "localParticipant.didPublish \(publication)" }) {
                 $0.participant?(self, didPublishTrack: publication)
             }
-            room.delegates.notify(label: { "localParticipant.didPublish \(publication)" }) {
+            await room.delegates.notifyAsync(label: { "localParticipant.didPublish \(publication)" }) {
                 $0.room?(room, participant: self, didPublishTrack: publication)
             }
 

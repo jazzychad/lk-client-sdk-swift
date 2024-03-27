@@ -89,6 +89,8 @@ extension LKRTCVideoCapturerDelegate {
         let sourceDimensions = Dimensions(width: Int32(CVPixelBufferGetWidth(pixelBuffer)),
                                           height: Int32(CVPixelBufferGetHeight(pixelBuffer)))
 
+        print("source dim: \(sourceDimensions)")
+
         guard sourceDimensions.isEncodeSafe else {
             logger.log("Skipping capture for dimensions: \(sourceDimensions)", .warning,
                        type: type(of: self))
@@ -100,7 +102,7 @@ extension LKRTCVideoCapturerDelegate {
         DispatchQueue.liveKitWebRTC.sync {
             let rtcBuffer = LKRTCCVPixelBuffer(pixelBuffer: pixelBuffer)
             let rtcFrame = LKRTCVideoFrame(buffer: rtcBuffer,
-                                           rotation: rotation,
+                                           rotation: rotation, // ce
                                            timeStampNs: timeStampNs)
 
             self.capturer(capturer, didCapture: rtcFrame)

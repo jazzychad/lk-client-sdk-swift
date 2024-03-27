@@ -273,14 +273,14 @@ public class VideoView: NativeView, Loggable {
             // isRendering updated
             if newState.isRendering != oldState.isRendering {
                 self.log("isRendering \(oldState.isRendering) -> \(newState.isRendering)")
-                self.delegates.notify(label: { "videoView.didUpdate isRendering: \(newState.isRendering)" }) {
+                self.delegates.notifyQueue(label: { "videoView.didUpdate isRendering: \(newState.isRendering)" }) {
                     $0.videoView?(self, didUpdate: newState.isRendering)
                 }
             }
 
             // viewSize updated
             if newState.viewSize != oldState.viewSize {
-                self.delegates.notify {
+                self.delegates.notifyQueue {
                     $0.videoView?(self, didUpdate: newState.viewSize)
                 }
             }
@@ -330,7 +330,7 @@ public class VideoView: NativeView, Loggable {
 
                 if await self._state.isRendering, let renderDate = await self._state.renderDate {
                     let diff = Date().timeIntervalSince(renderDate)
-                    if diff >= Self._freezeDetectThreshold {
+                    if await diff >= Self._freezeDetectThreshold {
                         await self._state.mutate { $0.isRendering = false }
                     }
                 }
@@ -536,7 +536,7 @@ extension VideoView: VideoRenderer {
         }
 
         let rotation = state.rotationOverride ?? frame.rotation
-        let dimensions = frame.dimensions.apply(rotation: rotation.toRTCType())
+        let dimensions = frame.dimensions.apply(rotation: rotation.toRTCType()) // ce
 
         guard dimensions.isRenderSafe else {
             log("skipping render for dimension \(dimensions)", .warning)
